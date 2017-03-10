@@ -1,54 +1,64 @@
 package PizzaCalories;
 
 public class Topping {
-    private String topingType;
+    private String type;
     private double weight;
 
-    public Topping(String topingType, double weight) {
-        this.setTopingType(topingType);
+    public Topping(String type, double weight) throws Exception {
+        this.setType(type);
         this.setWeight(weight);
     }
 
-    private void setWeight(double weight) {
-        if (weight >= 1 && weight <= 50) {
-            this.weight = weight;
-        } else {
-            throw new NumberFormatException(String.format("%s weight should be in the range [1..50].", this
-                    .topingType));
-        }
+    public String getType() {
+        return type;
     }
 
-    private void setTopingType(String topingType) {
-        if (topingType.toLowerCase().equals("meat") ||
-                topingType.toLowerCase().equals("veggies") ||
-                topingType.toLowerCase().equals("cheese") ||
-                topingType.toLowerCase().equals("sauce")) {
-            this.topingType = topingType;
-        } else {
-            throw new NumberFormatException(String.format("Cannot place %s on top of your pizza.", topingType));
+    private void setType(String type) throws Exception {
+        if (type == null ||
+                !type.toLowerCase().equals("meat") &&
+                        !type.toLowerCase().equals("veggies") &&
+                        !type.toLowerCase().equals("cheese") &&
+                        !type.toLowerCase().equals("sauce")) {
+            throw new Exception(String.format("Cannot place %s on top of your pizza.", type));
         }
+
+        this.type = type;
     }
 
-    public double calculateCalories() {
-        Double result = this.weight * 2;
+    public double getWeight() {
+        return weight;
+    }
 
-        switch (topingType.toLowerCase()) {
+    private void setWeight(double weight) throws Exception {
+        if (weight < 1 || weight > 50) {
+            throw new Exception(String.format("%s weight should be in the range [1..50].", this.getType()));
+        }
+        this.weight = weight;
+    }
+
+
+    public double getCalories() {
+        double typeModifier = getTypeModifier();
+        return (2 * this.getWeight()) * typeModifier;
+    }
+
+    private double getTypeModifier() {
+        double typeModifier = 0.0;
+
+        switch (this.getType().toLowerCase()) {
             case "meat":
-                result *= 1.2d;
+                typeModifier = 1.2;
                 break;
             case "veggies":
-                result *= 0.8d;
+                typeModifier = 0.8;
                 break;
             case "cheese":
-                result *= 1.1d;
+                typeModifier = 1.1;
                 break;
             case "sauce":
-                result *= 0.9d;
+                typeModifier = 0.9;
                 break;
         }
-        return result;
+        return typeModifier;
     }
 }
-
-
-

@@ -1,73 +1,64 @@
 package PizzaCalories;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader sc = new BufferedReader(new InputStreamReader(System.in));
 
-        String input = sc.readLine();
-        String[] data = input.split("\\s+");
-        if (data[0].toLowerCase().equals("pizza")) {
-            Pizza myPizza = null;
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+
+        String command = in.nextLine();
+        while (!"END".equals(command)) {
             try {
-                myPizza = new Pizza(data[1], Integer.parseInt(data[2]));
-            } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
-                return;
-            }
+                if (command.startsWith("Dough")) {
+                    String[] doughArgs = command.split("\\s+");
+                    String flourType = doughArgs[1];
+                    String bakingTechnique = doughArgs[2];
+                    double weight = Double.parseDouble(doughArgs[3]);
 
-            input = sc.readLine();
-            data = input.split("\\s+");
-            try {
-                myPizza.createDough(new Dough(data[1], data[2], Double.parseDouble(data[3])));
-            } catch (NumberFormatException e) {
-                System.out.println(e.getMessage());
-                return;
-            }
+                    Dough dough = new Dough(flourType, bakingTechnique, weight);
+                    System.out.printf("%.2f%n", dough.getCalories());
+                } else if (command.startsWith("Topping")) {
+                    String[] toppingArgs = command.split("\\s+");
+                    String type = toppingArgs[1];
+                    double weight = Double.parseDouble(toppingArgs[2]);
 
+                    Topping topping = new Topping(type, weight);
+                    System.out.printf("%.2f%n", topping.getCalories());
+                } else {
+                    String[] pizzaArgs = command.split("\\s+");
+                    String name = pizzaArgs[1];
+                    int numberOfToppings = Integer.parseInt(pizzaArgs[2]);
 
-            input = sc.readLine();
-            while (!input.equals("END")) {
-                data = input.split("\\s+");
+                    Pizza pizza = new Pizza(name, numberOfToppings);
 
-                try {
-                    myPizza.addTopping(new Topping(data[1], Double.parseDouble(data[2])));
-                } catch (NumberFormatException e) {
-                    System.out.println(e.getMessage());
-                    return;
+                    String[] doughArgs = in.nextLine().split("\\s+");
+                    String flourType = doughArgs[1];
+                    String bakingTechnique = doughArgs[2];
+                    double doughWeight = Double.parseDouble(doughArgs[3]);
+
+                    Dough dough = new Dough(flourType, bakingTechnique, doughWeight);
+                    pizza.setDough(dough);
+
+                    for (int i = 0; i < numberOfToppings; i++) {
+                        String[] toppingArgs = in.nextLine().split("\\s+");
+                        String type = toppingArgs[1];
+                        double toppingWeight = Double.parseDouble(toppingArgs[2]);
+
+                        Topping topping = new Topping(type, toppingWeight);
+
+                        pizza.addTopping(topping);
+                    }
+
+                    System.out.println(pizza);
                 }
-
-
-                input = sc.readLine();
-
-            }
-            System.out.printf("%s - %.2f Calories.", myPizza.getName(), myPizza.totalCalories());
-        } else {
-            try {
-                Dough dough = new Dough(data[1], data[2], Double.parseDouble(data[3]));
-                System.out.printf("%.2f%n", dough.calculateCalories());
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
                 return;
             }
 
-            input = sc.readLine();
-            while (!input.equals("END")) {
-                data = input.split("\\s+");
-
-                try {
-                    Topping topping = new Topping(data[1], Double.parseDouble(data[2]));
-                    System.out.printf("%.2f%n", topping.calculateCalories());
-                } catch (NumberFormatException e) {
-                    System.out.println(e.getMessage());
-                    return;
-                }
-
-                input = sc.readLine();
-            }
+            command = in.nextLine();
         }
     }
 }
+

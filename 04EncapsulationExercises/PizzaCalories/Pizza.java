@@ -1,61 +1,81 @@
 package PizzaCalories;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Pizza {
     private String name;
     private Dough dough;
-    private int toppingsAmount;
-    private List<Topping> toppings;
+    private int numberOfToppings;
+    private Topping[] toppings;
 
-    public Pizza(String name, int toppingsAmount) {
+    private int indexCount;
+
+    public Pizza(String name, int numberOfToppings) throws Exception {
         this.setName(name);
-        this.setToppingsAmount(toppingsAmount);
-        toppings = new ArrayList<>();
+        this.setNumberOfToppings(numberOfToppings);
+        this.setToppings(new Topping[numberOfToppings]);
     }
-
-    private void setName(String name) {
-        if (!name.equals("") && name.length() <= 15) {
-            this.name = name;
-        } else {
-            throw new NumberFormatException("Pizza name should be between 1 and 15 symbols");
-        }
-    }
-
-    public double totalCalories() {
-        Double sum = 0d;
-
-        sum += dough.calculateCalories();
-        for (int i = 0; i < this.toppings.size(); i++) {
-            sum += this.toppings.get(i).calculateCalories();
-        }
-
-        return sum;
-    }
-
-    public void addTopping(Topping topping) {
-        this.toppings.add(topping);
-    }
-
-    public void createDough(Dough dough) {
-        this.dough = dough;
-    }
-
 
     public String getName() {
         return name;
     }
 
-    private int getToppingsAmount() {
-        return toppingsAmount;
+    private void setName(String name) throws Exception {
+        if (name.trim().length() == 0 || name.length() > 15) {
+            throw new Exception("Pizza name should be between 1 and 15 symbols.");
+        }
+
+        this.name = name;
     }
 
-    private void setToppingsAmount(int toppingsAmount) {
-        if (toppingsAmount >= 1 && toppingsAmount <= 10) {
-            this.toppingsAmount = toppingsAmount;
-        } else {
-            throw new NumberFormatException("Number of toppings should be in range [0..10].");
+    public Dough getDough() {
+        return dough;
+    }
+
+    public void setDough(Dough dough) {
+        this.dough = dough;
+    }
+
+    public int getNumberOfToppings() {
+        return numberOfToppings;
+    }
+
+    private void setNumberOfToppings(int numberOfToppings) throws Exception {
+        if (numberOfToppings < 0 || numberOfToppings > 10) {
+            throw new Exception("Number of toppings should be in range [0..10].");
         }
+
+        this.numberOfToppings = numberOfToppings;
+    }
+
+    public Topping[] getToppings() {
+        return toppings;
+    }
+
+    private void setToppings(Topping[] toppings) {
+        this.toppings = toppings;
+    }
+
+    public void addTopping(Topping topping) {
+        this.toppings[this.indexCount++] = topping;
+    }
+
+    private double getCalories() {
+        double total = getTotal();
+
+        return total;
+    }
+
+    private double getTotal() {
+        double total = 0.0;
+        total += this.dough.getCalories();
+        for (Topping topping : this.getToppings()) {
+            total += topping.getCalories();
+        }
+
+        return total;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s - %.2f", this.getName(), this.getCalories());
     }
 }

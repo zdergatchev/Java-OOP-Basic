@@ -5,62 +5,80 @@ public class Dough {
     private String bakingTechnique;
     private double weight;
 
-    public Dough(String flourType, String bakingTechnique, double weight) {
+    public Dough(String flourType, String bakingTechnique, double weight) throws Exception {
         this.setFlourType(flourType);
         this.setBakingTechnique(bakingTechnique);
         this.setWeight(weight);
     }
 
-    private void setWeight(double weight) {
-        if (weight >= 1 && weight <= 200) {
-            this.weight = weight;
-        } else {
-            throw new NumberFormatException("Dough weight should be in the range [1..200].");
-        }
+    public String getFlourType() {
+        return flourType;
     }
 
-    private void setFlourType(String flourType) {
-        if (flourType.toLowerCase().equals("white") || flourType.toLowerCase().equals("wholegrain")) {
-            this.flourType = flourType;
-        } else {
-            throw new NumberFormatException("Invalid type of dough.");
+    private void setFlourType(String flourType) throws Exception {
+        if (flourType == null ||
+                !flourType.toLowerCase().equals("white") &&
+                        !flourType.toLowerCase().equals("wholegrain")) {
+            throw new Exception("Invalid type of dough.");
         }
+
+        this.flourType = flourType;
     }
 
-    private void setBakingTechnique(String bakingTechnique) {
-        if (bakingTechnique.toLowerCase().equals("crispy") ||
-                bakingTechnique.toLowerCase().equals("chewy") ||
-                bakingTechnique.toLowerCase().equals("homemade")) {
-            this.bakingTechnique = bakingTechnique;
-        } else {
-            throw new NumberFormatException("Invalid type of dough.");
-        }
+    public String getBakingTechnique() {
+        return bakingTechnique;
     }
 
-    public double calculateCalories() {
-        Double result = this.weight * 2;
-
-        switch (flourType.toLowerCase()) {
-            case "white":
-                result *= 1.5d;
-                break;
-            case "wholegrain":
-                result *= 1d;
+    private void setBakingTechnique(String bakingTechnique) throws Exception {
+        if (bakingTechnique == null ||
+                !bakingTechnique.toLowerCase().equals("crispy") &&
+                        !bakingTechnique.toLowerCase().equals("chewy") &&
+                        !bakingTechnique.toLowerCase().equals("homemade")) {
+            throw new Exception("Invalid type of dough.");
         }
 
-        switch (this.bakingTechnique.toLowerCase()) {
-            case "crispy":
-                result *= 0.9d;
-                break;
-            case "chewy":
-                result *= 1.1d;
-                break;
-            case "homemade":
-                result *= 1.0d;
-                break;
+
+        this.bakingTechnique = bakingTechnique;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    private void setWeight(double weight) throws Exception {
+        if (weight < 1 || weight > 200) {
+            throw new Exception("Dough weight should be in the range [1..200].");
         }
-        return result;
+
+        this.weight = weight;
+    }
+
+    public double getCalories() {
+        double flourTypeModifier = getFlourTypeModifier();
+        double bakingTechniqueModifier = getBakingTechniqueModifier();
+
+        return (2 * this.getWeight()) * flourTypeModifier * bakingTechniqueModifier;
+    }
+
+    private double getBakingTechniqueModifier() {
+        double bakingTechniqueModifier;
+        if (this.getBakingTechnique().toLowerCase().equals("crispy")) {
+            bakingTechniqueModifier = 0.9;
+        } else if (this.getBakingTechnique().toLowerCase().equals("chewy")) {
+            bakingTechniqueModifier = 1.1;
+        } else {
+            bakingTechniqueModifier = 1.0;
+        }
+        return bakingTechniqueModifier;
+    }
+
+    private double getFlourTypeModifier() {
+        double flourTypeModifier;
+        if (this.getFlourType().toLowerCase().equals("white")) {
+            flourTypeModifier = 1.5;
+        } else {
+            flourTypeModifier = 1.0;
+        }
+        return flourTypeModifier;
     }
 }
-
-
